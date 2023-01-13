@@ -1,0 +1,8 @@
+name: ${project.artifactId}
+main: com.github.exobite.mc.zombiefyvillagers.PluginMaster
+version: ${project.version}
+author: ExoBiTe
+website: none
+description: This Plugin allows you to set a custom Chance for Villager Zombiefication.
+api-version: 1.17
+depend: [NBTAPI]
