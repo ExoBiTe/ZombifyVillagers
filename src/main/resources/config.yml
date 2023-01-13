@@ -1,1 +1,7 @@
+#Configuration File for ZombifyVillagers by ExoBite @ https://www.spigotmc.org/resources/107370/
+
+#Set the Chance for a Infection when a Villager is killed by a Zombie. (Value from 0.0-1.0).
 InfectionChance: 0.5
+
+#Set to true for a Notification on Console and Ingame when a Plugin-Update is released.
+CheckForUpdate: true
