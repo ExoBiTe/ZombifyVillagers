@@ -30,7 +30,7 @@ public class UpdateChecker {
     }
 
     private final String MY_USER_AGENT = "ExobitePlugin";
-    private final int RESOURCE_ID = 0;  //TODO: Add correct Spigot Resource ID (only available after Release)
+    private final int RESOURCE_ID = 107370;
     private final String GET_LATEST_VERSION = "https://api.spiget.org/v2/resources/"+RESOURCE_ID+"/versions/latest";
     private final String GET_LATEST_DOWNLOAD = "https://api.spiget.org/v2/resources/"+RESOURCE_ID+"/download";
     private final String GET_LATEST_UPDATE = "https://api.spiget.org/v2/resources/"+RESOURCE_ID+"/updates?size=1&sort=-date";

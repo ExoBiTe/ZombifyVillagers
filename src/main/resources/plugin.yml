@@ -1,5 +1,5 @@
 name: ${project.artifactId}
-main: com.github.exobite.mc.zombiefyvillagers.PluginMaster
+main: com.github.exobite.mc.zombifyvillagers.PluginMaster
 version: ${project.version}
 author: ExoBiTe
 website: none

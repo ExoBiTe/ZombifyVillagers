@@ -3,6 +3,7 @@ package com.github.exobite.mc.zombifyvillagers;
 import com.github.exobite.mc.zombifyvillagers.listener.EntityDeath;
 import com.github.exobite.mc.zombifyvillagers.utils.Config;
 import com.github.exobite.mc.zombifyvillagers.utils.Utils;
+import com.github.exobite.mc.zombifyvillagers.web.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,8 +33,7 @@ public class PluginMaster extends JavaPlugin {
         Utils.registerUtils(this);
         Config.setupConfig(this).loadConfig(false);
         getServer().getPluginManager().registerEvents(new EntityDeath(), this);
-        //TODO: Add Spigot PluginID to AutoUpdater (and Website to plugin.yml, too!)
-        //if(Config.getInstance().checkForUpdate()) UpdateChecker.createUpdateChecker(this, true);
+        if(Config.getInstance().checkForUpdate()) UpdateChecker.createUpdateChecker(this, true);
         if(Config.getInstance().allowMetrics()) setupBStats();
         sendConsoleMessage(Level.INFO, "Running (took "+(System.currentTimeMillis()-time1)+"ms)!");
     }
