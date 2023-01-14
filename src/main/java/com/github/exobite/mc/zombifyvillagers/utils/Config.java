@@ -4,7 +4,6 @@ import com.github.exobite.mc.zombifyvillagers.PluginMaster;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class Config {
 
         }
 
-        private List<ConfigValue<?>> configValues = new ArrayList<>();
+        private final List<ConfigValue<?>> configValues = new ArrayList<>();
 
         //Config Values
         ConfigValue<Double> infectionChance = new ConfigValue<>("InfectionChance", 0.5, Double.class);
@@ -85,7 +84,7 @@ public class Config {
     }
 
     public String reloadConfiguration() {
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         ConfigValues newConf = readValuesFromFileConfiguration(loadConfigFromFile());
         //Compare all Config Values
         for(int i=0;i<currentConf.configValues.size();i++) {
@@ -114,8 +113,8 @@ public class Config {
     private YamlConfiguration loadConfigFromFile() {
         if(!mainInstance.getDataFolder().exists()) sendInitialStartupMessage();
         File f = new File(mainInstance.getDataFolder() + File.separator + CONF_FILENAME);
-        boolean filechanged = Utils.updateFileVersionDependent(CONF_FILENAME);
-        if(filechanged) PluginMaster.sendConsoleMessage(Level.INFO, "Your "+CONF_FILENAME+" got updated!");
+        boolean fileChanged = Utils.updateFileVersionDependent(CONF_FILENAME);
+        if(fileChanged) PluginMaster.sendConsoleMessage(Level.INFO, "Your "+CONF_FILENAME+" got updated!");
         return YamlConfiguration.loadConfiguration(f);
     }
 
@@ -157,11 +156,7 @@ public class Config {
         return true;
     }
 
-    private void setOnlyIfExists(YamlConfiguration conf, String key, Object value) {
-        if(conf.get(key) == null) return;
-        conf.set(key, value);
-    }
-
+    @SuppressWarnings("SameParameterValue")
     private double setBounds(double min, double value, double max) {
         return Math.min(Math.max(min, value), max);
     }

@@ -4,10 +4,7 @@ import com.github.exobite.mc.zombifyvillagers.utils.Config;
 import com.github.exobite.mc.zombifyvillagers.utils.VersionHelper;
 import de.tr7zw.nbtapi.*;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.ZombieVillager;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -21,41 +18,44 @@ public class EntityDeath implements Listener {
     private record VillagerNBTData(NBTCompoundList gossips, NBTCompound offers, NBTCompound vData, int xp, boolean isAdult) {}
 
     @EventHandler
-    private void onEntityByEntityDeath(EntityDamageByEntityEvent e) {
+    public void onEntityByEntityDeath(EntityDamageByEntityEvent e) {
         if(!(e.getEntity() instanceof LivingEntity ent)) return;
         if((e.getDamager().getType() != EntityType.ZOMBIE && e.getDamager().getType() != EntityType.ZOMBIE_VILLAGER)
                 || e.getEntityType() != EntityType.VILLAGER) return;
         if(ent.getHealth() - e.getFinalDamage() > 0) return;
         double rdm = rdmInst.nextDouble(0.0, 1.0);
         if(rdm > Config.getInstance().getInfectionChance()) return;
-        tryVillagerZombiefication((Villager) e.getEntity());
+        tryVillagerZombiefication((Villager) e.getEntity(), e.getEntity().getVehicle());
     }
 
     @EventHandler
-    private void onEntitySpawn(CreatureSpawnEvent e) {
+    public void onEntitySpawn(CreatureSpawnEvent e) {
         if(e.getEntityType() != EntityType.ZOMBIE_VILLAGER) return;
         if(e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.INFECTION) {
             e.setCancelled(true);
         }
     }
 
-    private void tryVillagerZombiefication(Villager v) {
+    private void tryVillagerZombiefication(Villager v, Entity vehicle) {
         NBTEntity nbtv = new NBTEntity(v);
         NBTCompoundList gossips = nbtv.getCompoundList("Gossips");
         NBTCompound offers = nbtv.getCompound("Offers");
         NBTCompound vData = nbtv.getCompound("VillagerData");
         int xp = nbtv.getInteger("Xp");
         VillagerNBTData dat = new VillagerNBTData(gossips, offers, vData, xp, v.isAdult());
-        spawnCustomZombieVillager(v.getLocation(), dat);
+        spawnCustomZombieVillager(v.getLocation(), dat, vehicle);
     }
 
-    private void spawnCustomZombieVillager(Location l, VillagerNBTData data) {
+    private void spawnCustomZombieVillager(Location l, VillagerNBTData data, Entity vehicle) {
         assert l.getWorld() != null;
         ZombieVillager ze = l.getWorld().spawn(l, ZombieVillager.class);
         if(data.isAdult()) {
             ze.setAdult();
         }else{
             ze.setBaby();
+        }
+        if(vehicle!=null) {
+            vehicle.addPassenger(ze);
         }
         NBTEntity zeNbt = new NBTEntity(ze);
         addDataToEntity(zeNbt, setNameToCompound("Gossips", data.gossips()));

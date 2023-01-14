@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 
 import java.util.Locale;
 
+@SuppressWarnings("unused")
 public class VersionHelper {
 
     private VersionHelper() {}
@@ -13,7 +14,9 @@ public class VersionHelper {
             return new Version(0, 0, 0);
         }
         String[] versionSplits = version.split("\\.");
-        int major, minor, patch=0;
+        int major;
+        int minor;
+        int patch = 0;
         major = Integer.parseInt(versionSplits[0]);
         minor = Integer.parseInt(versionSplits[1]);
         if(versionSplits.length>=3) patch = Integer.parseInt(versionSplits[2]);

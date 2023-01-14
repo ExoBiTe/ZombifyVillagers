@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@SuppressWarnings("NullableProblems")
 public class ZombifyVillagersCommand implements CommandExecutor, TabCompleter {
 
     private static final String CHANGE_RATE_PERM = "zombifyvillagers.cmd.changeInfectionRate";
@@ -28,22 +29,24 @@ public class ZombifyVillagersCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         if(args.length<1) {
-            sender.sendMessage(getDefaultCommandUsage(sender, args));
+            sender.sendMessage(getDefaultCommandUsage(sender));
             return true;
         }
 
         switch (args[0].toLowerCase(Locale.ROOT)) {
             case "reloadconfig" -> {
-                return reloadConfigCmd(sender, args);
+                return reloadConfigCmd(sender);
             }
 
             case "changeinfectionrate" -> {
                 return changeInfectionRateCmd(sender, args);
             }
-        }
 
-        sender.sendMessage(getDefaultCommandUsage(sender, args));
-        return true;
+            default -> {
+                sender.sendMessage(getDefaultCommandUsage(sender));
+                return true;
+            }
+        }
     }
 
     private boolean changeInfectionRateCmd(CommandSender sender, String[] args) {
@@ -56,7 +59,7 @@ public class ZombifyVillagersCommand implements CommandExecutor, TabCompleter {
                     ChatColor.GRAY+"The current Infection Rate is "+ChatColor.AQUA+Config.getInstance().getInfectionChance()+ChatColor.GRAY+"!" +
                             "\nTo change it, use "+ChatColor.GOLD+"/ZombifyVillagers changeInfectionRate <rate>");
         }else{
-            double val = -1;
+            double val;
             try {
                 val = Double.parseDouble(args[1]);
             }catch(NumberFormatException e) {
@@ -72,8 +75,13 @@ public class ZombifyVillagersCommand implements CommandExecutor, TabCompleter {
                 @Override
                 public void run() {
                     Config.getInstance().setInfectionChance(finalVal);
-                    Config.getInstance().writeCurrentConfigToFile();
-                    sender.sendMessage(ChatColor.GREEN+"Infection Chance has been set to "+finalVal+"!");
+                    boolean success = Config.getInstance().writeCurrentConfigToFile();
+                    if(success) {
+                        sender.sendMessage(ChatColor.GREEN+"Infection Chance has been set to "+finalVal+"!");
+                    }else{
+                        sender.sendMessage(ChatColor.RED+"An error has occurred while writing the data.\n" +
+                                "Check the console log for further information.");
+                    }
                 }
             }.runTaskAsynchronously(PluginMaster.getInstance());
             sender.sendMessage(ChatColor.GREEN+"Changing Infection Chance to "+args[1]+"...");
@@ -81,7 +89,7 @@ public class ZombifyVillagersCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private boolean reloadConfigCmd(CommandSender sender, String[] args) {
+    private boolean reloadConfigCmd(CommandSender sender) {
         if(!sender.hasPermission(RELOAD_CFG_PERM)) {
             sender.sendMessage(NO_PERMISSION);
             return true;
@@ -97,7 +105,7 @@ public class ZombifyVillagersCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private String getDefaultCommandUsage(CommandSender sender, String[] args) {
+    private String getDefaultCommandUsage(CommandSender sender) {
         StringBuilder sb = new StringBuilder().append(ChatColor.GRAY).append("Command Usage:\n");
         sb.append(ChatColor.GOLD).append("/ZombifyVillagers ");
         boolean alreadyAddedSomething = false;
@@ -108,7 +116,7 @@ public class ZombifyVillagersCommand implements CommandExecutor, TabCompleter {
         }
         if (sender.hasPermission(RELOAD_CFG_PERM)) {
             sb.append(alreadyAddedSomething ? " | " : "<");
-            alreadyAddedSomething = true;
+            //If more Commands get added, don't forget to add 'alreadyAddedSomething = true;' here
             sb.append("reloadConfig");
         }
         sb.append(">");

@@ -8,7 +8,7 @@ Normal-Mode: 50%
 Hard-Mode: 100%[/I]
 ([SIZE=3][URL='https://minecraft.fandom.com/wiki/Zombie_Villager#Spawning']wiki[/URL][/SIZE])
 
-[CENTER]With this Plugin you are able to set these Values Globally, without the interference of Minecrafts Difficulty.
+[CENTER]With this Plugin you are able to set these Values Globally, without the interference of Minecraft's Difficulty.
 [/CENTER]
 
 [B][SIZE=5]How to Use:[/SIZE][/B]

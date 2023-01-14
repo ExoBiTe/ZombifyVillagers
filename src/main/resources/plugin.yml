@@ -26,7 +26,7 @@ permissions:
     description: Get a Notification upon Login when an Update is available
 
   zombifyvillagers.cmd.changeInfectionRate:
-    description: Allows the usage of the /ZombifyVillagrs changeInfectionRate Command
+    description: Allows the usage of the /ZombifyVillagers changeInfectionRate Command
 
   zombifyvillagers.cmd.reloadConfig:
-    description: Allows the usage of the /ZombifyVillagrs reloadConfig Command
+    description: Allows the usage of the /ZombifyVillagers reloadConfig Command

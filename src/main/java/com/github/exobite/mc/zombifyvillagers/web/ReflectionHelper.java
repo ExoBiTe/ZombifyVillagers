@@ -21,11 +21,11 @@ public class ReflectionHelper {
         return instance;
     }
     private Method gsonParserMethod;
-    private final boolean use1_18Methods;
+    private final boolean usePast118Methods;
 
     private ReflectionHelper(){
         //Check for the Version
-        use1_18Methods = VersionHelper.isEqualOrLarger(VersionHelper.getBukkitVersion(), new Version(1, 18, 0));
+        usePast118Methods = VersionHelper.isEqualOrLarger(VersionHelper.getBukkitVersion(), new Version(1, 18, 0));
 
         //Cache the Methods for later use
         setParseReaderMethod();
@@ -34,7 +34,7 @@ public class ReflectionHelper {
     private void setParseReaderMethod() {
         Class<JsonParser> clazz = JsonParser.class;
         try {
-            if(use1_18Methods) {
+            if(usePast118Methods) {
                 gsonParserMethod = clazz.getMethod("parseReader", Reader.class);
             }else{
                 gsonParserMethod = clazz.getMethod("parse", Reader.class);
@@ -44,11 +44,13 @@ public class ReflectionHelper {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    //Surpressing deprecated "new JsonParser()" as it already is only called when using a Version, where it isn't deprecated.
     public JsonElement parseReader(InputStreamReader isr) {
         if(gsonParserMethod==null) return null;
         JsonElement rVal = null;
         try {
-            if(use1_18Methods) {
+            if(usePast118Methods) {
                 rVal = (JsonElement) gsonParserMethod.invoke(null, isr);
             }else{
                 rVal = (JsonElement) gsonParserMethod.invoke(new JsonParser(), isr);

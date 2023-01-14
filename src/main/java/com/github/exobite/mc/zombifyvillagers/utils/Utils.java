@@ -86,7 +86,7 @@ public class Utils {
         }
         InputStream is = getResource(filePath);
         if(is==null) {
-            PluginMaster.sendConsoleMessage(Level.SEVERE, "Couldn´t find "+filePath+" in project files.");
+            PluginMaster.sendConsoleMessage(Level.SEVERE, "Couldn't find "+filePath+" in project files.");
             return false;
         }
         InputStreamReader rd = new InputStreamReader(is);
@@ -99,7 +99,7 @@ public class Utils {
             }
         }
         if(change) {
-            //Save Fileconfig to file
+            //Save FileConfig to file
             try {
                 fc.save(f);
             } catch (IOException e) {
@@ -118,7 +118,7 @@ public class Utils {
 
     public static int countMatches(String toSearch, String match) {
         //Example: "abc.abc.abc.def", "def"
-        // length = 15, newlength = 12, diff 3 division by lenght of match = 1
+        // length = 15, newLength = 12, diff 3 division by length of match = 1
         return (toSearch.length() - toSearch.replace(match, "").length()) / match.length();
     }
 

@@ -1,10 +1,6 @@
 package com.github.exobite.mc.zombifyvillagers.utils;
 
-/*public record Version(int major,
-                      int minor,
-                      int patch) {
-}*/
-
+@SuppressWarnings("unused")
 public class Version {
 
     private final int major;

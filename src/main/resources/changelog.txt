@@ -1,3 +1,6 @@
+Changelog from Version 1.2.0 to 1.3.0:
+    - Transformed Villagerzombies don't get ejected from their Vehicle anymore.
+
 Changelog from Version 1.1.0 to 1.2.0:
     - Added the "/ZombifyVillagers reloadConfig"-Command:
         - Needs the Permission 'zombifyvillagers.cmd.reloadconfig'

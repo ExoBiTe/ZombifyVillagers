@@ -21,18 +21,17 @@ public class UpdateChecker {
         return instance;
     }
 
-    public static UpdateChecker createUpdateChecker(JavaPlugin main, boolean useBukkitAsyncScheduler) {
+    public static void createUpdateChecker(JavaPlugin main, boolean useBukkitAsyncScheduler) {
         if(instance==null){
             instance = new UpdateChecker(main);
             instance.start(useBukkitAsyncScheduler);
         }
-        return instance;
     }
 
-    private final String MY_USER_AGENT = "ExobitePlugin";
-    private final int RESOURCE_ID = 107370;
-    private final String GET_LATEST_VERSION = "https://api.spiget.org/v2/resources/"+RESOURCE_ID+"/versions/latest";
-    private final String GET_LATEST_UPDATE = "https://api.spiget.org/v2/resources/"+RESOURCE_ID+"/updates?size=1&sort=-date";
+    private static final String MY_USER_AGENT = "ExobitePlugin";
+    private static final int RESOURCE_ID = 107370;
+    private static final String GET_LATEST_VERSION = "https://api.spiget.org/v2/resources/"+RESOURCE_ID+"/versions/latest";
+    private static final String GET_LATEST_UPDATE = "https://api.spiget.org/v2/resources/"+RESOURCE_ID+"/updates?size=1&sort=-date";
 
     private final JavaPlugin main;
 

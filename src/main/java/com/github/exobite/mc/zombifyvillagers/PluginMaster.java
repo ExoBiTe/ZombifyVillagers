@@ -28,6 +28,8 @@ public class PluginMaster extends JavaPlugin {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
+    //Surpressing the getCommand(..)#setExecutor Null-Warning, as getCommand(..) never returns null in this Case.
     @Override
     public void onEnable() {
         long time1 = System.currentTimeMillis();
