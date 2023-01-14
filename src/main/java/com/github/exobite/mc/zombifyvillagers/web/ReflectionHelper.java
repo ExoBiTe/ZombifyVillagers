@@ -48,7 +48,6 @@ public class ReflectionHelper {
         if(gsonParserMethod==null) return null;
         JsonElement rVal = null;
         try {
-            gsonParserMethod.setAccessible(true);
             if(use1_18Methods) {
                 rVal = (JsonElement) gsonParserMethod.invoke(null, isr);
             }else{

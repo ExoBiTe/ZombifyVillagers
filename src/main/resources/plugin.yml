@@ -7,12 +7,26 @@ description: This Plugin allows you to set a custom Chance for Villager Zombiefi
 api-version: 1.17
 depend: [NBTAPI]
 
+commands:
+  ZombifyVillagers:
+    description: ZombifyVillagers Main Command
+    usage: /ZombifyVillagers
+    aliases: zv
+
 permissions:
   zombifyvillagers.*:
     default: op
     description: All Plugin Permissions
     children:
       zombifyvillagers.notifyOnUpdate: true
+      zombifyvillagers.cmd.changeInfectionRate: true
+      zombifyvillagers.cmd.reloadConfig: true
 
   zombifyvillagers.notifyOnUpdate:
     description: Get a Notification upon Login when an Update is available
+
+  zombifyvillagers.cmd.changeInfectionRate:
+    description: Allows the usage of the /ZombifyVillagrs changeInfectionRate Command
+
+  zombifyvillagers.cmd.reloadConfig:
+    description: Allows the usage of the /ZombifyVillagrs reloadConfig Command

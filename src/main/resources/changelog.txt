@@ -1,3 +1,13 @@
+Changelog from Version 1.1.0 to 1.2.0:
+    - Added the "/ZombifyVillagers reloadConfig"-Command:
+        - Needs the Permission 'zombifyvillagers.cmd.reloadconfig'
+        - Reloads the config.yml file, displaying changes to the command-user
+    - Added the "/ZombifyVillagers changeInfectionRate"-Command:
+        - Needs the Permission 'zombifyvillagers.cmd.changeInfectionRate'
+        - Allows the Change of the Infection Rate Chance Ingame
+        - Writes the value directly to the config.yml File
+    - Both Commands come with a TabCompleter
+
 Changelog from Version 1.0.0 to 1.1.0:
     - Added the UpdateChecker
     - Added the "zombifyvillagers.notifyOnUpdate" Permission

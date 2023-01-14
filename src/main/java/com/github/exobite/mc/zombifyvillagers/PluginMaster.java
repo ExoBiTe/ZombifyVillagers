@@ -2,6 +2,7 @@ package com.github.exobite.mc.zombifyvillagers;
 
 import com.github.exobite.mc.zombifyvillagers.listener.EntityDeath;
 import com.github.exobite.mc.zombifyvillagers.listener.PlayerLogin;
+import com.github.exobite.mc.zombifyvillagers.listener.ZombifyVillagersCommand;
 import com.github.exobite.mc.zombifyvillagers.utils.Config;
 import com.github.exobite.mc.zombifyvillagers.utils.Utils;
 import com.github.exobite.mc.zombifyvillagers.web.UpdateChecker;
@@ -37,6 +38,7 @@ public class PluginMaster extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerLogin(), this);
         if(Config.getInstance().checkForUpdate()) UpdateChecker.createUpdateChecker(this, true);
         if(Config.getInstance().allowMetrics()) setupBStats();
+        getCommand("ZombifyVillagers").setExecutor(new ZombifyVillagersCommand());
         sendConsoleMessage(Level.INFO, "Running (took "+(System.currentTimeMillis()-time1)+"ms)!");
     }
 

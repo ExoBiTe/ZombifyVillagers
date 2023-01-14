@@ -4,8 +4,12 @@ import com.github.exobite.mc.zombifyvillagers.PluginMaster;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class Config {
@@ -24,10 +28,38 @@ public class Config {
     }
     private static class ConfigValues {
 
+        private class ConfigValue<T> {
+
+            String key;
+            T value;
+            Class<T> type;
+
+            ConfigValue(String key, T value, Class<T> type) {
+                this.key = key;
+                this.value = value;
+                this.type = type;
+                configValues.add(this);
+            }
+
+            void setValue(Object o) {
+                this.value = type.cast(o);
+            }
+
+        }
+
+        private List<ConfigValue<?>> configValues = new ArrayList<>();
+
         //Config Values
-        double infectionChance = 0.5;
-        boolean checkForUpdate = true;
-        boolean allowMetrics = true;
+        ConfigValue<Double> infectionChance = new ConfigValue<>("InfectionChance", 0.5, Double.class);
+        ConfigValue<Boolean> checkForUpdate = new ConfigValue<>("CheckForUpdate", true, Boolean.class);
+        ConfigValue<Boolean> allowMetrics = new ConfigValue<>("AllowMetrics", true, Boolean.class);
+
+        ConfigValue<?> getConfigValueByKey(String key) {
+            for(ConfigValue<?> v : configValues) {
+                if(v.key.equals(key)) return v;
+            }
+            return null;
+        }
 
     }
 
@@ -55,10 +87,12 @@ public class Config {
     public String reloadConfiguration() {
         StringBuilder sb = new StringBuilder("");
         ConfigValues newConf = readValuesFromFileConfiguration(loadConfigFromFile());
-        compareValues("InfectionChance", currentConf.infectionChance, newConf.infectionChance, sb);
-        compareValues("CheckForUpdate", currentConf.checkForUpdate, newConf.checkForUpdate, sb);
-        compareValues("AllowMetrics", currentConf.allowMetrics, newConf.allowMetrics, sb);
-
+        //Compare all Config Values
+        for(int i=0;i<currentConf.configValues.size();i++) {
+            ConfigValues.ConfigValue<?> cfgOld = currentConf.configValues.get(i);
+            ConfigValues.ConfigValue<?> cfgNew = newConf.configValues.get(i);
+            compareValues(cfgOld.key, cfgOld.value, cfgNew.value, sb);
+        }
         if(sb.toString().length()==0) {
             sb.append("No Differences between the old and new Config have been found.");
         }
@@ -67,7 +101,7 @@ public class Config {
     }
 
     private <T> void compareValues(String name, T oldConf, T newConf, StringBuilder sb) {
-        if(oldConf == newConf) return;
+        if(oldConf.equals(newConf)) return;
         if(sb.toString().length()==0) sb.append("Found Differences:");  //Header
         sb.append("\n").append(name).append(": ").append(oldConf).append(" --> ").append(newConf);
     }
@@ -94,10 +128,38 @@ public class Config {
             );
             return cv;
         }
-        cv.infectionChance = setBounds(0f, conf.getDouble("InfectionChance", cv.infectionChance), 1.0);
-        cv.checkForUpdate = conf.getBoolean("CheckForUpdate", cv.checkForUpdate);
-        cv.allowMetrics = conf.getBoolean("AllowMetrics", cv.allowMetrics);
+        for(ConfigValues.ConfigValue<?> value : cv.configValues) {
+            value.setValue(conf.get(value.key, value.value));
+        }
+        //Validation
+        cv.infectionChance.setValue(setBounds(0.0, cv.infectionChance.value, 1.0));
         return cv;
+    }
+
+    public boolean writeCurrentConfigToFile() {
+        File f = new File(mainInstance.getDataFolder() + File.separator + CONF_FILENAME);
+        if(!f.exists()) {
+            mainInstance.getLogger().log(Level.SEVERE, "Couldn't write to config, no File found.");
+            return false;
+        }
+        YamlConfiguration conf = YamlConfiguration.loadConfiguration(f);
+        for(String key : conf.getKeys(true)) {
+            ConfigValues.ConfigValue<?> cfgVal = currentConf.getConfigValueByKey(key);
+            if(cfgVal==null) continue;
+            conf.set(key, cfgVal.value);
+        }
+        try {
+            conf.save(f);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private void setOnlyIfExists(YamlConfiguration conf, String key, Object value) {
+        if(conf.get(key) == null) return;
+        conf.set(key, value);
     }
 
     private double setBounds(double min, double value, double max) {
@@ -118,15 +180,21 @@ public class Config {
     //Config Getters
 
     public double getInfectionChance() {
-        return currentConf.infectionChance;
+        return currentConf.infectionChance.value;
     }
 
     public boolean checkForUpdate() {
-        return currentConf.checkForUpdate;
+        return currentConf.checkForUpdate.value;
     }
 
     public boolean allowMetrics() {
-        return currentConf.allowMetrics;
+        return currentConf.allowMetrics.value;
+    }
+
+    //Config Setters
+
+    public void setInfectionChance(double infectionChance) {
+        currentConf.infectionChance.value = setBounds(0.0, infectionChance, 1.0);
     }
 
 }
