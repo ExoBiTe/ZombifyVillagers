@@ -15,7 +15,13 @@ import java.util.Random;
 public class EntityDeath implements Listener {
 
     private final Random rdmInst = new Random();
-    private record VillagerNBTData(NBTCompoundList gossips, NBTCompound offers, NBTCompound vData, int xp, boolean isAdult) {}
+    private record VillagerNBTData(NBTCompoundList gossips,
+                                   NBTCompound offers,
+                                   NBTCompound vData,
+                                   int xp,
+                                   boolean isAdult,
+                                   Entity vehicle,
+                                   String customName) {}
 
     @EventHandler
     public void onEntityByEntityDeath(EntityDamageByEntityEvent e) {
@@ -25,7 +31,7 @@ public class EntityDeath implements Listener {
         if(ent.getHealth() - e.getFinalDamage() > 0) return;
         double rdm = rdmInst.nextDouble(0.0, 1.0);
         if(rdm > Config.getInstance().getInfectionChance()) return;
-        tryVillagerZombiefication((Villager) e.getEntity(), e.getEntity().getVehicle());
+        tryVillagerZombiefication((Villager) e.getEntity());
     }
 
     @EventHandler
@@ -36,17 +42,17 @@ public class EntityDeath implements Listener {
         }
     }
 
-    private void tryVillagerZombiefication(Villager v, Entity vehicle) {
+    private void tryVillagerZombiefication(Villager v) {
         NBTEntity nbtv = new NBTEntity(v);
         NBTCompoundList gossips = nbtv.getCompoundList("Gossips");
         NBTCompound offers = nbtv.getCompound("Offers");
         NBTCompound vData = nbtv.getCompound("VillagerData");
         int xp = nbtv.getInteger("Xp");
-        VillagerNBTData dat = new VillagerNBTData(gossips, offers, vData, xp, v.isAdult());
-        spawnCustomZombieVillager(v.getLocation(), dat, vehicle);
+        VillagerNBTData dat = new VillagerNBTData(gossips, offers, vData, xp, v.isAdult(), v.getVehicle(), v.getCustomName());
+        spawnCustomZombieVillager(v.getLocation(), dat);
     }
 
-    private void spawnCustomZombieVillager(Location l, VillagerNBTData data, Entity vehicle) {
+    private void spawnCustomZombieVillager(Location l, VillagerNBTData data) {
         assert l.getWorld() != null;
         ZombieVillager ze = l.getWorld().spawn(l, ZombieVillager.class);
         if(data.isAdult()) {
@@ -54,9 +60,8 @@ public class EntityDeath implements Listener {
         }else{
             ze.setBaby();
         }
-        if(vehicle!=null) {
-            vehicle.addPassenger(ze);
-        }
+        if(data.vehicle()!=null) data.vehicle().addPassenger(ze);
+        if(data.customName()!=null) ze.setCustomName(data.customName());
         NBTEntity zeNbt = new NBTEntity(ze);
         addDataToEntity(zeNbt, setNameToCompound("Gossips", data.gossips()));
         addDataToEntity(zeNbt, setNameToCompound("Offers", data.offers()));
